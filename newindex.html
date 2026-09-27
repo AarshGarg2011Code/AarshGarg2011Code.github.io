@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aarsh Garg — Portfolio</title>
+  
+  <!-- Modern Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg: #060e14;
+      --card-bg: rgba(12, 23, 34, 0.75);
+      --card-border: rgba(6, 182, 212, 0.15);
+      --text-main: #f0f9ff;
+      --text-muted: #7dd3fc;
+      --accent-1: #06b6d4; /* Aqua Cyan */
+      --accent-2: #3b82f6; /* Ocean Blue */
+      --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      --glow: rgba(6, 182, 212, 0.18);
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* CUSTOM SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(6, 182, 212, 0.25);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-1);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 70%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* TERMINAL OVERLAY CONTAINER */
+    #terminal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: #030712;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      font-family: var(--font-mono);
+      transition: opacity 0.6s ease, filter 0.6s ease;
+    }
+
+    /* TERMINAL WINDOW STYLING */
+    .terminal-window {
+      width: 100%;
+      max-width: 820px;
+      height: 480px;
+      background: rgba(8, 14, 22, 0.95);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(6, 182, 212, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .btn-dot.red { background: #ef4444; }
+    .btn-dot.yellow { background: #f59e0b; }
+    .btn-dot.green { background: #10b981; }
+
+    .terminal-title {
+      color: #64748b;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .terminal-body {
+      padding: 1.25rem;
+      flex: 1;
+      overflow-y: auto;
+      color: #7dd3fc;
+      font-size: 0.825rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* LOG COLORS */
+    .log-line { margin-bottom: 2px; }
+    .log-green { color: #34d399; font-weight: 600; }
+    .log-cyan { color: #38bdf8; }
+    .log-accent { color: #a855f7; }
+    .log-white { color: #f8fafc; }
+    .log-warn { color: #fbbf24; }
+
+    /* BINARY MATRIX CANVAS OVERLAY */
+    #binary-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    /* DISSOLVE EFFECT */
+    .terminal-dissolve {
+      opacity: 0;
+      filter: blur(12px) brightness(1.6);
+      pointer-events: none;
+    }
+
+    /* ANIMATED AMBIENT BACKGROUND */
+    .bg-glow-1, .bg-glow-2 {
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      filter: blur(140px);
+      z-index: -1;
+      opacity: 0.35;
+      animation: float 12s ease-in-out infinite alternate;
+    }
+
+    .bg-glow-1 {
+      background: var(--accent-1);
+      top: -120px;
+      left: -100px;
+    }
+
+    .bg-glow-2 {
+      background: var(--accent-2);
+      top: 400px;
+      right: -100px;
+      animation-delay: -6s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 60px) scale(1.15); }
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem;
+    }
+
+    /* GLASSMORPHISM CARD BASE */
+    .glass {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* HERO HEADER */
+    header {
+      padding: 3rem 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent-gradient);
+    }
+
+    .profile-container {
+      position: relative;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.2));
+      border: 2px solid rgba(6, 182, 212, 0.4);
+      box-shadow: 0 0 25px var(--glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-1);
+    }
+
+    .status-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: #10b981;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 3px solid #0c1722;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+
+    .hero-text h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-text .subtitle {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      margin-top: 0.35rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-social {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.1rem;
+      background: rgba(6, 182, 212, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-social:hover {
+      background: var(--accent-1);
+      color: var(--bg);
+      border-color: var(--accent-1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px var(--glow);
+    }
+
+    /* SKILLS SECTION */
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .section-title::before {
+      content: '>';
+      font-family: var(--font-mono);
+      color: var(--accent-1);
+      font-weight: 700;
+    }
+
+    .skills-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 3rem;
+    }
+
+    .skill-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(6, 182, 212, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .skill-pill:hover {
+      border-color: var(--accent-1);
+      color: var(--text-main);
+      background: var(--glow);
+      transform: translateY(-1px);
+    }
+
+    /* FILTER TABS & PROJECTS */
+    .filter-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      color: var(--accent-1);
+      background: rgba(6, 182, 212, 0.08);
+      border-color: rgba(6, 182, 212, 0.2);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      min-height: 220px;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(6, 182, 212, 0.4);
+      box-shadow: 0 12px 30px -10px var(--glow);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .folder-icon {
+      color: var(--accent-1);
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .card p {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .card-pypi {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-1);
+      word-break: break-all;
+      margin-bottom: 1.25rem;
+    }
+
+    .tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--accent-1);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid rgba(6, 182, 212, 0.15);
+    }
+
+    /* CONTACT SECTION */
+    .contact-card {
+      padding: 3rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .contact-card p {
+      color: #94a3b8;
+      max-width: 500px;
+      margin: 0 auto 1.75rem auto;
+      font-size: 0.95rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.75rem;
+      background: var(--accent-gradient);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 10px 25px var(--glow);
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(6, 182, 212, 0.35);
+      filter: brightness(1.1);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 640px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+        padding: 2.25rem 1.5rem;
+      }
+      .social-links {
+        justify-content: center;
+      }
+      .filter-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Terminal Boot Overlay -->
+  <div id="terminal-overlay">
+    <div class="terminal-window">
+      <div class="terminal-header">
+        <span class="btn-dot red"></span>
+        <span class="btn-dot yellow"></span>
+        <span class="btn-dot green"></span>
+        <span class="terminal-title">tty1 — linux-kernel-build</span>
+      </div>
+      <div class="terminal-body" id="terminal-output"></div>
+    </div>
+  </div>
+
+  <!-- Ambient background lighting -->
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <div class="container">
+    
+    <!-- HERO HEADER -->
+    <header class="glass">
+      <div class="profile-container">
+        <div class="profile-avatar">
+          <i data-lucide="terminal" style="width: 50px; height: 50px;"></i>
+        </div>
+        <div class="status-badge" title="Available for work"></div>
+      </div>
+      
+      <div class="hero-text">
+        <h1>Aarsh Garg</h1>
+        <p class="subtitle">System Software Developer</p>
+        
+        <div class="social-links">
+          <a href="https://github.com/AarshGarg2011Code" target="_blank" class="btn-social">
+            <i data-lucide="git-branch"></i> GitHub
+          </a>
+          <a href="https://snapchat.com/@aarshankurgarg" target="_blank" class="btn-social">
+            <i data-lucide="ghost"></i> Snapchat
+          </a>
+          <a href="https://pypi.org/user/aarshgargpython" target="_blank" class="btn-social">
+            <i data-lucide="box"></i> PyPI
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- SKILLS MATRIX -->
+    <section>
+      <h2 class="section-title"><i data-lucide="cpu" class="folder-icon"></i> Tech Stack</h2>
+      <div class="skills-wrapper">
+        <span class="skill-pill"><i data-lucide="code-2"></i> Python</span>
+        <span class="skill-pill"><i data-lucide="terminal"></i> Bash</span>
+        <span class="skill-pill"><i data-lucide="file-text"></i> BatchScript</span>
+        <span class="skill-pill"><i data-lucide="cpu"></i> C</span>
+        <span class="skill-pill"><i data-lucide="braces"></i> JSON</span>
+        <span class="skill-pill"><i data-lucide="hard-drive"></i> Linux</span>
+        <span class="skill-pill"><i data-lucide="git-branch"></i> Git & GitHub</span>
+      </div>
+    </section>
+
+    <!-- FEATURED PROJECTS -->
+    <section>
+      <div class="filter-wrapper">
+        <h2 class="section-title" style="margin-bottom:0;"><i data-lucide="folder-git-2" class="folder-icon"></i> Featured Projects</h2>
+        
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+          <button class="tab-btn active" onclick="filterProjects('all')">All</button>
+          <button class="tab-btn" onclick="filterProjects('package-py')">Python Packages</button>
+          <button class="tab-btn" onclick="filterProjects('experimental')">Experimental Python</button>
+          <button class="tab-btn" onclick="filterProjects('other')">Other Projects</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- Project 1 -->
+        <a href="https://github.com/AarshGarg2011Code/py2shell" target="_blank" style="text-decoration: none; color: inherit;">
+          <div class="card glass project-card" data-category="package-py">
+            <div>
+              <div class="card-header">
+                <i data-lucide="terminal" class="folder-icon"></i>
+                <i data-lucide="external-link" style="width: 18px; color: var(--text-muted);"></i>
+              </div>
+              <h3>Py2Shell</h3>
+              <p>A Python-Bash Transpiler package available on PyPI</p>
+              <p class="card-pypi">PyPI: https://pypi.org/project/py2shell</p>
+            </div>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">Bash</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Project 2 -->
+        <a href="https://github.com/AarshGarg2011Code/ajgar" target="_blank" style="text-decoration: none; color: inherit;">
+          <div class="card glass project-card" data-category="package-py">
+            <div>
+              <div class="card-header">
+                <i data-lucide="languages" class="folder-icon"></i>
+                <i data-lucide="external-link" style="width: 18px; color: var(--text-muted);"></i>
+              </div>
+              <h3>Ajgar</h3>
+              <p>A Python Package that enables users to write Python in Hindi.</p>
+              <p class="card-pypi">PyPI: https://pypi.org/project/ajgar</p>
+            </div>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">Hindi</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Project 3 -->
+        <a href="https://github.com/AarshGarg2011Code/UEFIPY-USB" target="_blank" style="text-decoration: none; color: inherit;">
+          <div class="card glass project-card" data-category="experimental">
+            <div>
+              <div class="card-header">
+                <i data-lucide="usb" class="folder-icon"></i>
+                <i data-lucide="external-link" style="width: 18px; color: var(--text-muted);"></i>
+              </div>
+              <h3>UEFIPY-USB</h3>
+              <p>Tool for testing Python in UEFI Setups.</p>
+            </div>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">EFI Shell</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Project 4 -->
+        <a href="https://github.com/AarshGarg2011Code/equations-pkg" target="_blank" style="text-decoration: none; color: inherit;">
+          <div class="card glass project-card" data-category="package-py">
+            <div>
+              <div class="card-header">
+                <i data-lucide="calculator" class="folder-icon"></i>
+                <i data-lucide="external-link" style="width: 18px; color: var(--text-muted);"></i>
+              </div>
+              <h3>equations-pkg</h3>
+              <p>Python package for equations solving.</p>
+              <p class="card-pypi">PyPI: https://pypi.org/project/equations-pkg</p>
+            </div>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">Math</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Project 5 -->
+        <a href="https://github.com/AarshGarg2011Code/AntiScript" target="_blank" style="text-decoration: none; color: inherit;">
+          <div class="card glass project-card" data-category="experimental">
+            <div>
+              <div class="card-header">
+                <i data-lucide="square-code" class="folder-icon"></i>
+                <i data-lucide="external-link" style="width: 18px; color: var(--text-muted);"></i>
+              </div>
+              <h3>AntiScript</h3>
+              <p>Discontinued Python-Based Programming Language Project saved for reference.</p>
+            </div>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">Syntax Handling</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Project 6 -->
+        <a href="https://github.com/AarshGarg2011Code/Waves-Cipher-WaveC" target="_blank" style="text-decoration: none; color: inherit;">
+          <div class="card glass project-card" data-category="experimental">
+            <div>
+              <div class="card-header">
+                <i data-lucide="waves" class="folder-icon"></i>
+                <i data-lucide="external-link" style="width: 18px; color: var(--text-muted);"></i>
+              </div>
+              <h3>Waves Cipher WaveC</h3>
+              <p>Python-Based Cipher that used Wave Patterns for Cryptographic Diffusion.</p>
+            </div>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">Cryptography</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- CONTACT CTA -->
+    <section>
+      <div class="glass contact-card">
+        <h2>Let's build something together</h2>
+        <p>I get interested in projects that are open-source, related to systems, or projects that make programming easier.</p>
+        <p style="margin-bottom: 1.5rem;">Contact me for collaboration:</p>
+        <a href="mailto:aarshg.13@gmail.com" class="btn-primary">
+          <i data-lucide="mail"></i> Get In Touch
+        </a>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // Initialize Lucide Vector Icons
+    lucide.createIcons();
+
+    // Project Filtering Logic
+    function filterProjects(category) {
+      const cards = document.querySelectorAll('.project-card');
+      const buttons = document.querySelectorAll('.tab-btn');
+
+      buttons.forEach(btn => {
+        btn.classList.remove('active');
+        const text = btn.innerText.toLowerCase();
+        if (
+          (category === 'all' && text === 'all') ||
+          (category === 'package-py' && text.includes('python packages')) ||
+          (category === 'experimental' && text.includes('experimental')) ||
+          (category === 'other' && text.includes('other'))
+        ) {
+          btn.classList.add('active');
+        }
+      });
+
+      cards.forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.parentElement.style.display = 'block';
+        } else {
+          card.parentElement.style.display = 'none';
+        }
+      });
+    }
+
+    // Terminal Kernel Compile Loader Logic
+    document.addEventListener("DOMContentLoaded", () => {
+      const output = document.getElementById("terminal-output");
+      const overlay = document.getElementById("terminal-overlay");
+
+      const logs = [
+        '<span class="log-cyan">[  0.000000] Linux version 6.8.0-custom (gcc 13.2.0) #1 SMP PREEMPT_DYNAMIC</span>',
+        '[  0.002140] Command line: BOOT_IMAGE=/vmlinuz-aarsh-sys root=UUID=sys-root quiet rw',
+        '<span class="log-accent">  CC      kernel/sched/core.o</span>',
+        '  CC      kernel/power/main.o',
+        '  CC      mm/page_alloc.o',
+        '<span class="log-accent">  CC      fs/ext4/super.o</span>',
+        '  CC      drivers/gpu/drm/i915/i915_drv.o',
+        '  CC      net/ipv4/tcp_input.o',
+        '<span class="log-accent">  LD      vmlinux.o</span>',
+        '  OBJCOPY arch/x86/boot/vmlinux.bin',
+        '  BUILD   arch/x86/boot/bzImage',
+        '<span class="log-green">[  0.642100] [OK] Kernel arch/x86/boot/bzImage is ready.</span>',
+        '<span class="log-green">[  0.812311] [OK] Reached target System Initialization.</span>',
+        '<span class="log-cyan">[  1.004120] Initializing Aarsh Garg System Portfolio Subsystem...</span>',
+        '<span class="log-green">[  1.241202] [OK] Mounted Web Application Volume.</span>',
+        '<span class="log-white">Starting Web Host Engine...</span>',
+        '<span class="log-green">[  1.450000] [SUCCESS] Site compiled successfully. Launching binary stream...</span>'
+      ];
+
+      let index = 0;
+
+      // Fast streaming printer
+      const printInterval = setInterval(() => {
+        if (index < logs.length) {
+          const line = document.createElement("div");
+          line.className = "log-line";
+          line.innerHTML = logs[index];
+          output.appendChild(line);
+          output.scrollTop = output.scrollHeight;
+          index++;
+        } else {
+          clearInterval(printInterval);
+          setTimeout(startBinaryDissolve, 350);
+        }
+      }, 35);
+
+      // Binary Matrix rain dissolve effect
+      function startBinaryDissolve() {
+        const canvas = document.createElement("canvas");
+        canvas.id = "binary-canvas";
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = "01";
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = Array(columns).fill(1);
+
+        canvas.style.opacity = "1";
+        overlay.classList.add("terminal-dissolve");
+
+        let frames = 0;
+
+        function drawMatrix() {
+          ctx.fillStyle = "rgba(6, 14, 20, 0.15)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = "#06b6d4";
+          ctx.font = `${fontSize}px monospace`;
+
+          for (let i = 0; i < drops.length; i++) {
+            const text = chars.charAt(Math.floor(Math.random() * chars.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+              drops[i] = 0;
+            }
+            drops[i]++;
+          }
+
+          frames++;
+          if (frames < 32) {
+            requestAnimationFrame(drawMatrix);
+          } else {
+            canvas.style.opacity = "0";
+            setTimeout(() => {
+              overlay.remove();
+              canvas.remove();
+            }, 400);
+          }
+        }
+
+        drawMatrix();
+      }
+    });
+  </script>
+</body>
+</html>
