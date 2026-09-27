@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aarsh Garg — Portfolio</title>
+  <title>Aarsh Garg — System Software Developer</title>
   
   <!-- Modern Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,12 +18,13 @@
       --card-border: rgba(6, 182, 212, 0.15);
       --text-main: #f0f9ff;
       --text-muted: #7dd3fc;
-      --accent-1: #06b6d4; /* Aqua Cyan */
-      --accent-2: #3b82f6; /* Ocean Blue */
+      --accent-1: #06b6d4;
+      --accent-2: #3b82f6;
       --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
       --glow: rgba(6, 182, 212, 0.18);
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
+      --font-tty: 'Courier New', Courier, monospace;
     }
 
     * {
@@ -62,96 +63,53 @@
       background-size: 100% 100%, 40px 40px, 40px 40px;
     }
 
-    /* TERMINAL OVERLAY CONTAINER */
     #terminal-overlay {
       position: fixed;
       inset: 0;
-      background-color: #030712;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      font-family: var(--font-mono);
-      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s ease;
-    }
-
-    /* TERMINAL WINDOW STYLING */
-    .terminal-window {
-      width: 100%;
-      max-width: 900px;
-      height: 520px;
-      background: rgba(6, 11, 18, 0.98);
-      border: 1px solid rgba(6, 182, 212, 0.35);
-      border-radius: 12px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 40px rgba(6, 182, 212, 0.15);
+      background-color: #000000; /* Pure Raw CRT Black */
+      z-index: 99999;
       display: flex;
       flex-direction: column;
+      padding: 1rem;
+      font-family: var(--font-tty);
+      color: #d1d5db; /* Classic Monochrome Light Gray */
+      font-size: 0.85rem;
+      line-height: 1.25;
       overflow: hidden;
+      transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .terminal-header {
-      background: rgba(15, 23, 42, 0.95);
-      padding: 0.65rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .btn-dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-    }
-    .btn-dot.red { background: #ef4444; }
-    .btn-dot.yellow { background: #f59e0b; }
-    .btn-dot.green { background: #10b981; }
-
-    .terminal-title {
-      color: #64748b;
-      font-size: 0.75rem;
-      margin-left: 0.5rem;
-      letter-spacing: 0.05em;
-    }
-
-    .terminal-body {
-      padding: 1.25rem;
+    .tty-screen {
       flex: 1;
       overflow-y: auto;
-      color: #7dd3fc;
-      font-size: 0.825rem;
-      line-height: 1.5;
       white-space: pre-wrap;
       word-break: break-all;
+      font-weight: 400;
     }
 
-    /* LOG COLORS */
-    .log-line { margin-bottom: 2px; }
-    .log-green { color: #34d399; font-weight: 600; }
-    .log-cyan { color: #38bdf8; }
-    .log-accent { color: #a855f7; }
-    .log-white { color: #f8fafc; }
-    .log-warn { color: #fbbf24; }
-    .log-blue { color: #60a5fa; }
-    .log-dim { color: #475569; }
-
-    /* PROGRESS BAR IN TERMINAL */
-    .progress-bar-line {
-      margin-top: 6px;
-      margin-bottom: 6px;
-      color: #38bdf8;
-      font-weight: bold;
+    .tty-screen::-webkit-scrollbar {
+      display: none; /* Hide scrollbar for authentic raw tty console */
     }
 
-    /* FADE OUT TRANSITION */
+    .cursor-blink {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background-color: #d1d5db;
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: blink 0.8s infinite steps(1);
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
     .terminal-fade-out {
       opacity: 0;
-      transform: scale(0.98);
       pointer-events: none;
     }
 
-    /* ANIMATED AMBIENT BACKGROUND */
     .bg-glow-1, .bg-glow-2 {
       position: absolute;
       width: 450px;
@@ -187,7 +145,6 @@
       padding: 3.5rem 1.5rem;
     }
 
-    /* GLASSMORPHISM CARD BASE */
     .glass {
       background: var(--card-bg);
       backdrop-filter: blur(20px);
@@ -197,7 +154,6 @@
       box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     }
 
-    /* HERO HEADER */
     header {
       padding: 3rem 2.5rem;
       display: flex;
@@ -296,7 +252,6 @@
       box-shadow: 0 8px 20px var(--glow);
     }
 
-    /* SKILLS SECTION */
     .section-title {
       font-size: 1.35rem;
       font-weight: 700;
@@ -344,7 +299,6 @@
       transform: translateY(-1px);
     }
 
-    /* FILTER TABS & PROJECTS */
     .filter-wrapper {
       display: flex;
       justify-content: space-between;
@@ -454,7 +408,6 @@
       border: 1px solid rgba(6, 182, 212, 0.15);
     }
 
-    /* CONTACT SECTION */
     .contact-card {
       padding: 3rem 2.5rem;
       text-align: center;
@@ -500,7 +453,6 @@
       filter: brightness(1.1);
     }
 
-    /* RESPONSIVE */
     @media (max-width: 640px) {
       header {
         flex-direction: column;
@@ -519,17 +471,8 @@
 </head>
 <body>
 
-  <!-- Terminal Boot Overlay -->
   <div id="terminal-overlay">
-    <div class="terminal-window">
-      <div class="terminal-header">
-        <span class="btn-dot red"></span>
-        <span class="btn-dot yellow"></span>
-        <span class="btn-dot green"></span>
-        <span class="terminal-title">tty1 — Linux Kernel v6.8.0-aarsh-sys (Compilation & System Init)</span>
-      </div>
-      <div class="terminal-body" id="terminal-output"></div>
-    </div>
+    <div class="tty-screen" id="tty-output"></div>
   </div>
 
   <!-- Ambient background lighting -->
@@ -552,20 +495,20 @@
         <p class="subtitle">System Software Developer</p>
         
         <div class="social-links">
-          <a href="https://github.com/AarshGarg2011Code" target="_blank" class="btn-social">
+          <a href="https://github.com/AarshGarg2011Code" target="_blank" rel="noopener" class="btn-social">
             <i data-lucide="git-branch"></i> GitHub
           </a>
-          <a href="https://snapchat.com/@aarshankurgarg" target="_blank" class="btn-social">
+          <a href="https://snapchat.com/@aarshankurgarg" target="_blank" rel="noopener" class="btn-social">
             <i data-lucide="ghost"></i> Snapchat
           </a>
-          <a href="https://pypi.org/user/aarshgargpython" target="_blank" class="btn-social">
+          <a href="https://pypi.org/user/aarshgargpython" target="_blank" rel="noopener" class="btn-social">
             <i data-lucide="box"></i> PyPI
           </a>
         </div>
       </div>
     </header>
 
-    <!-- SKILLS MATRIX -->
+    <!-- TECH STACK -->
     <section>
       <h2 class="section-title"><i data-lucide="cpu" class="folder-icon"></i> Tech Stack</h2>
       <div class="skills-wrapper">
@@ -589,13 +532,13 @@
           <button class="tab-btn active" onclick="filterProjects('all')">All</button>
           <button class="tab-btn" onclick="filterProjects('package-py')">Python Packages</button>
           <button class="tab-btn" onclick="filterProjects('experimental')">Experimental Python</button>
-          <button class="tab-btn" onclick="filterProjects('other')">Other Projects</button>
+          <button class="tab-btn" onclick="filterProjects('other')">Other</button>
         </div>
       </div>
 
       <div class="grid">
         <!-- Project 1 -->
-        <a href="https://github.com/AarshGarg2011Code/py2shell" target="_blank" style="text-decoration: none; color: inherit;">
+        <a href="https://github.com/AarshGarg2011Code/py2shell" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
           <div class="card glass project-card" data-category="package-py">
             <div>
               <div class="card-header">
@@ -614,7 +557,7 @@
         </a>
 
         <!-- Project 2 -->
-        <a href="https://github.com/AarshGarg2011Code/ajgar" target="_blank" style="text-decoration: none; color: inherit;">
+        <a href="https://github.com/AarshGarg2011Code/ajgar" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
           <div class="card glass project-card" data-category="package-py">
             <div>
               <div class="card-header">
@@ -633,7 +576,7 @@
         </a>
 
         <!-- Project 3 -->
-        <a href="https://github.com/AarshGarg2011Code/UEFIPY-USB" target="_blank" style="text-decoration: none; color: inherit;">
+        <a href="https://github.com/AarshGarg2011Code/UEFIPY-USB" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
           <div class="card glass project-card" data-category="experimental">
             <div>
               <div class="card-header">
@@ -651,7 +594,7 @@
         </a>
 
         <!-- Project 4 -->
-        <a href="https://github.com/AarshGarg2011Code/equations-pkg" target="_blank" style="text-decoration: none; color: inherit;">
+        <a href="https://github.com/AarshGarg2011Code/equations-pkg" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
           <div class="card glass project-card" data-category="package-py">
             <div>
               <div class="card-header">
@@ -670,7 +613,7 @@
         </a>
 
         <!-- Project 5 -->
-        <a href="https://github.com/AarshGarg2011Code/AntiScript" target="_blank" style="text-decoration: none; color: inherit;">
+        <a href="https://github.com/AarshGarg2011Code/AntiScript" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
           <div class="card glass project-card" data-category="experimental">
             <div>
               <div class="card-header">
@@ -688,7 +631,7 @@
         </a>
 
         <!-- Project 6 -->
-        <a href="https://github.com/AarshGarg2011Code/Waves-Cipher-WaveC" target="_blank" style="text-decoration: none; color: inherit;">
+        <a href="https://github.com/AarshGarg2011Code/Waves-Cipher-WaveC" target="_blank" rel="noopener" style="text-decoration: none; color: inherit;">
           <div class="card glass project-card" data-category="experimental">
             <div>
               <div class="card-header">
@@ -722,10 +665,8 @@
   </div>
 
   <script>
-    // Initialize Lucide Vector Icons
     lucide.createIcons();
 
-    // Project Filtering Logic
     function filterProjects(category) {
       const cards = document.querySelectorAll('.project-card');
       const buttons = document.querySelectorAll('.tab-btn');
@@ -752,93 +693,141 @@
       });
     }
 
-    // Advanced & Detailed Kernel Compile + System Init Loader Logic
+    // RAW REALISTIC KERNEL COMPILATION & SYSTEM LOGS SEQUENCE
     document.addEventListener("DOMContentLoaded", () => {
-      const output = document.getElementById("terminal-output");
+      const ttyOutput = document.getElementById("tty-output");
       const overlay = document.getElementById("terminal-overlay");
 
-      const kernelLogs = [
-        '<span class="log-cyan">[  0.000000] Linux version 6.8.0-aarsh-sys (gcc-13 13.2.0, GNU ld 2.42) #1 SMP PREEMPT_DYNAMIC</span>',
-        '<span class="log-dim">[  0.000012] Command line: BOOT_IMAGE=/vmlinuz-6.8.0-aarsh root=UUID=3a8f9c2d-910e-4b2a-88f1 quiet rw splash acpi=force</span>',
-        '<span class="log-dim">[  0.000410] BIOS-provided physical RAM map: [0x0000000000000000 - 0x00000003ffffffff] (16384MB usable)</span>',
-        '<span class="log-dim">[  0.001021] SMBIOS 3.4.0 present. Hypervisor detected: KVM/QEMU x86_64</span>',
-        '<span class="log-accent">  CC [M]  arch/x86/kernel/head64.o</span>',
-        '<span class="log-accent">  CC [M]  arch/x86/mm/fault.o</span>',
-        '<span class="log-accent">  CC [M]  kernel/sched/fair.o (EVP_AES_256_GCM hardware acceleration)</span>',
-        '<span class="log-accent">  CC [M]  kernel/locking/mutex.o</span>',
-        '<span class="log-accent">  CC [M]  mm/page_alloc.o (NUMA node 0 initialized)</span>',
-        '<span class="log-blue">[  0.012845] ACPI: Core revision 20230628 enabled. 8 CPU logical cores detected.</span>',
-        '<span class="log-accent">  CC [M]  fs/ext4/super.o</span>',
-        '<span class="log-accent">  CC [M]  fs/btrfs/disk-io.o</span>',
-        '<span class="log-accent">  CC [M]  drivers/gpu/drm/i915/i915_drv.o</span>',
-        '<span class="log-accent">  CC [M]  drivers/net/ethernet/intel/e1000e/netdev.o</span>',
-        '<span class="log-blue">[  0.104210] PCI: Probing PCI hardware (bus 0000:00)</span>',
-        '<span class="log-blue">[  0.182014] PCI: 0000:00:02.0 [10de:2484] GPU VRAM 8192MB mapped successfully</span>',
-        '<span class="log-accent">  LD [M]  vmlinux.o</span>',
-        '<span class="log-accent">  OBJCOPY arch/x86/boot/vmlinux.bin</span>',
-        '<span class="log-accent">  BUILD   arch/x86/boot/bzImage (Compressed size: 12.4MB)</span>',
-        '<span class="log-green">[  0.421092] [OK] Kernel arch/x86/boot/bzImage build verified successfully.</span>',
-        '<span class="log-cyan">[  0.510100] Starting systemd 255.4-1-arch init process...</span>',
-        '<span class="log-green">[  0.612019] [OK] Reached target Early Boot Environment & Storage.</span>',
-        '<span class="log-green">[  0.702118] [OK] Mounted Root File System /dev/nvme0n1p2 (ext4 rw,noatime).</span>',
-        '<span class="log-cyan">[  0.840122] Initializing Aarsh Garg System Portfolio Core Runtime Subsystems...</span>',
-        '<span class="log-dim">           -> Loading module: py2shell.ko (Python-to-Bash Transpiler Engine)... [LOADED]</span>',
-        '<span class="log-dim">           -> Loading module: ajgar.ko (Hindi Language Parser Driver)... [LOADED]</span>',
-        '<span class="log-dim">           -> Loading module: uefipy_usb.ko (EFI Subsystem Sandbox)... [LOADED]</span>',
-        '<span class="log-dim">           -> Loading module: wavec_crypto.ko (Wave Cipher Hardware Acceleration)... [LOADED]</span>',
-        '<span class="log-green">[  1.102310] [OK] Reached target Multi-User System State.</span>',
-        '<span class="log-green">[  1.250410] [OK] Reached target System Initialization & Network Stack.</span>',
-        '<span class="log-white">[  1.380000] Starting GUI Display Manager & Web Host Engine...</span>',
-        '<span class="log-green">[  1.520000] [SUCCESS] All system modules compiled & active. Launching user interface...</span>'
+      // Full raw Linux compilation and initialization logs with authentic gcc calls & e820 maps
+      const rawKernelLogs = [
+        "root@aarsh-sys:~# make -j8 bzImage modules",
+        "  CALL    scripts/checksyscalls.sh",
+        "  CALL    scripts/atomic/check-atomics.sh",
+        "  DESCEND objtool",
+        "  INSTALL libsubcmd_headers",
+        "  CC      arch/x86/kernel/asm-offsets.s",
+        "  UPD     include/generated/asm-offsets.h",
+        "  CALL    arch/x86/tools/relocs_32.c",
+        "  CALL    arch/x86/tools/relocs_64.c",
+        "gcc -Wp,-MMD,arch/x86/kernel/.head64.o.d -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE -m64 -mno-80387 -mtune=generic -mno-red-zone -mcmodel=kernel -Wno-sign-compare -fno-asynchronous-unwind-tables -mindirect-branch=thunk-extern -mindirect-branch-register -fno-jump-tables -fno-stack-protector -O2 -c -o arch/x86/kernel/head64.o arch/x86/kernel/head64.c",
+        "  CC      arch/x86/kernel/head64.o",
+        "  CC      arch/x86/kernel/head_64.o",
+        "  CC      arch/x86/kernel/ebda.o",
+        "  CC      arch/x86/kernel/platform-quirks.o",
+        "gcc -Wp,-MMD,arch/x86/kernel/cpu/.common.o.d -Wall -Werror=implicit-function-declaration -O2 -c -o arch/x86/kernel/cpu/common.o arch/x86/kernel/cpu/common.c",
+        "  CC      arch/x86/kernel/cpu/common.o",
+        "  CC      arch/x86/kernel/cpu/rdrand.o",
+        "  CC      arch/x86/kernel/cpu/intel.o",
+        "  CC      arch/x86/kernel/cpu/amd.o",
+        "  CC      init/main.o",
+        "  CC      init/version.o",
+        "  CC      init/do_mounts.o",
+        "  CC      init/initramfs.o",
+        "  CC      kernel/sched/core.o",
+        "  CC      kernel/sched/loadavg.o",
+        "  CC      kernel/sched/clock.o",
+        "  CC      kernel/sched/fair.o",
+        "  CC      kernel/locking/mutex.o",
+        "  CC      kernel/locking/spinlock.o",
+        "  CC      kernel/power/main.o",
+        "  CC      mm/page_alloc.o",
+        "  CC      mm/slab.o",
+        "  CC      mm/slub.o",
+        "  CC      mm/vmscan.o",
+        "  CC      mm/memory.o",
+        "  CC      fs/ext4/super.o",
+        "  CC      fs/ext4/inode.o",
+        "  CC      fs/ext4/namei.o",
+        "  CC      fs/btrfs/super.o",
+        "  CC      drivers/tty/tty_io.o",
+        "  CC      drivers/tty/tty_main.o",
+        "  CC      drivers/tty/vt/vt.o",
+        "  CC      drivers/pci/pci.o",
+        "  CC      drivers/pci/probe.o",
+        "  CC      drivers/net/ethernet/intel/e1000e/netdev.o",
+        "  CC      drivers/gpu/drm/i915/i915_drv.o",
+        "  LD      arch/x86/kernel/built-in.a",
+        "  LD      kernel/built-in.a",
+        "  LD      mm/built-in.a",
+        "  LD      fs/built-in.a",
+        "  LD      drivers/built-in.a",
+        "  AR      built-in.a",
+        "  LD      vmlinux.o",
+        "  MODPOST vmlinux.symvers",
+        "  OBJCOPY arch/x86/boot/vmlinux.bin",
+        "  BUILD   arch/x86/boot/bzImage",
+        "Kernel: arch/x86/boot/bzImage is ready (#1)",
+        "root@aarsh-sys:~# qemu-system-x86_64 -kernel arch/x86/boot/bzImage -append \"console=tty0 root=/dev/sda1 rw\"",
+        "[    0.000000] Linux version 6.8.0-aarsh-sys (gcc version 13.2.0) #1 SMP PREEMPT_DYNAMIC Sun Sep 27 18:45:00 IST 2026",
+        "[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-6.8.0 root=UUID=3a8f9c2d-910e-4b2a-88f1 rw quiet console=tty0",
+        "[    0.000120] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'",
+        "[    0.000122] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'",
+        "[    0.000125] BIOS-provided physical RAM map:",
+        "[    0.000128] BIOS-e820: [mem 0x0000000000000000-0x000000000009d7ff] usable",
+        "[    0.000130] BIOS-e820: [mem 0x000000000009d800-0x000000000009ffff] reserved",
+        "[    0.000133] BIOS-e820: [mem 0x0000000000100000-0x000000003fffffff] usable",
+        "[    0.001015] NX (Execute Disable) protection: active",
+        "[    0.002140] SMBIOS 3.4.0 present.",
+        "[    0.012401] ACPI: Core revision 20230628",
+        "[    0.021000] APIC: Switch to symmetric I/O mode setup completed.",
+        "[    0.045120] Zone ranges:",
+        "[    0.045122]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]",
+        "[    0.045125]   Normal   [mem 0x0000000001000000-0x000000003fffffff]",
+        "[    0.104200] PCI: Probing PCI hardware (bus 0000:00)",
+        "[    0.182014] PCI: 0000:00:02.0 [10de:2484] GPU VRAM 8192MB mapped successfully",
+        "[    0.210400] Clocksource tc-tsc: mask: 0xffffffffffffffff max_cycles: 0x2e2049e89b3",
+        "[    0.352100] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled",
+        "[    0.410200] Loop: module loaded",
+        "[    0.489000] Run /init as init process",
+        "[    0.510120] systemd[1]: System time set to Sun 2026-09-27 18:45:00 IST.",
+        "[    0.512000] systemd[1]: Inserted module 'py2shell' (Python-to-Bash Transpiler Driver)",
+        "[    0.612010] systemd[1]: Inserted module 'ajgar' (Hindi Parser Translation Subsystem)",
+        "[    0.702110] systemd[1]: Inserted module 'uefipy_usb' (UEFI Sandbox Execution Engine)",
+        "[    0.840120] systemd[1]: Inserted module 'wavec_crypto' (Wave Cipher Acceleration)",
+        "[    0.950100] systemd[1]: Reached target Local File Systems.",
+        "[    1.102310] systemd[1]: Reached target Multi-User System.",
+        "[    1.250410] systemd[1]: Reached target Graphical Interface.",
+        "[    1.380000] systemd[1]: Starting Display Manager & Web Host Interface...",
+        "Aarsh Linux 6.8.0-aarsh-sys tty1",
+        "aarsh-sys login: root (automatic login)",
+        "Last login: Sun Sep 27 18:45:00 on tty1",
+        "Launching Portfolio UI Core... OK"
       ];
 
-      let logIndex = 0;
+      // Add persistent blinking block cursor
+      const cursor = document.createElement("span");
+      cursor.className = "cursor-blink";
 
-      // Fast line-by-line printer
-      const printInterval = setInterval(() => {
-        if (logIndex < kernelLogs.length) {
-          const line = document.createElement("div");
-          line.className = "log-line";
-          line.innerHTML = kernelLogs[logIndex];
-          output.appendChild(line);
-          output.scrollTop = output.scrollHeight;
-          logIndex++;
-        } else {
-          clearInterval(printInterval);
-          renderProgressBar();
-        }
-      }, 25);
+      let lineIndex = 0;
 
-      // Terminal progress bar completion step
-      function renderProgressBar() {
-        const progressLine = document.createElement("div");
-        progressLine.className = "log-line progress-bar-line";
-        output.appendChild(progressLine);
-
-        let progress = 0;
-        const barLength = 28;
-
-        const progressInterval = setInterval(() => {
-          progress += 5;
-          const completed = Math.round((progress / 100) * barLength);
-          const remaining = barLength - completed;
-          const barStr = "[" + "=".repeat(completed) + ">" + " ".repeat(Math.max(0, remaining - 1)) + "]";
-          progressLine.innerHTML = `<span class="log-cyan">BOOTING UI ENGINE: </span> <span class="log-green">${barStr} ${progress}%</span>`;
-          output.scrollTop = output.scrollHeight;
-
-          if (progress >= 100) {
-            clearInterval(progressInterval);
-            setTimeout(dissolveOverlay, 250);
+      // Realistic classic hardware speed execution (80ms per line)
+      const ttyInterval = setInterval(() => {
+        if (lineIndex < rawKernelLogs.length) {
+          const currentText = rawKernelLogs[lineIndex];
+          const lineDiv = document.createElement("div");
+          lineDiv.textContent = currentText;
+          
+          if (cursor.parentNode) {
+            cursor.parentNode.removeChild(cursor);
           }
-        }, 18);
-      }
 
-      // Smooth fade-out transition to reveal the main portfolio interface
-      function dissolveOverlay() {
+          ttyOutput.appendChild(lineDiv);
+          ttyOutput.appendChild(cursor);
+          ttyOutput.scrollTop = ttyOutput.scrollHeight;
+          
+          lineIndex++;
+        } else {
+          clearInterval(ttyInterval);
+          // Pause slightly on completed login prompt before smooth dissolve transition
+          setTimeout(transitionToPortfolio, 1200);
+        }
+      }, 85);
+
+      function transitionToPortfolio() {
         overlay.classList.add("terminal-fade-out");
         setTimeout(() => {
           overlay.remove();
-        }, 800);
+        }, 1000);
       }
     });
   </script>
