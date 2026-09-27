@@ -73,25 +73,25 @@
       justify-content: center;
       padding: 1.5rem;
       font-family: var(--font-mono);
-      transition: opacity 0.6s ease, filter 0.6s ease;
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s ease;
     }
 
     /* TERMINAL WINDOW STYLING */
     .terminal-window {
       width: 100%;
-      max-width: 820px;
-      height: 480px;
-      background: rgba(8, 14, 22, 0.95);
-      border: 1px solid rgba(6, 182, 212, 0.3);
+      max-width: 900px;
+      height: 520px;
+      background: rgba(6, 11, 18, 0.98);
+      border: 1px solid rgba(6, 182, 212, 0.35);
       border-radius: 12px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(6, 182, 212, 0.15);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 40px rgba(6, 182, 212, 0.15);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
     .terminal-header {
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(15, 23, 42, 0.95);
       padding: 0.65rem 1rem;
       display: flex;
       align-items: center;
@@ -121,7 +121,7 @@
       overflow-y: auto;
       color: #7dd3fc;
       font-size: 0.825rem;
-      line-height: 1.45;
+      line-height: 1.5;
       white-space: pre-wrap;
       word-break: break-all;
     }
@@ -133,21 +133,21 @@
     .log-accent { color: #a855f7; }
     .log-white { color: #f8fafc; }
     .log-warn { color: #fbbf24; }
+    .log-blue { color: #60a5fa; }
+    .log-dim { color: #475569; }
 
-    /* BINARY MATRIX CANVAS OVERLAY */
-    #binary-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 9998;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
+    /* PROGRESS BAR IN TERMINAL */
+    .progress-bar-line {
+      margin-top: 6px;
+      margin-bottom: 6px;
+      color: #38bdf8;
+      font-weight: bold;
     }
 
-    /* DISSOLVE EFFECT */
-    .terminal-dissolve {
+    /* FADE OUT TRANSITION */
+    .terminal-fade-out {
       opacity: 0;
-      filter: blur(12px) brightness(1.6);
+      transform: scale(0.98);
       pointer-events: none;
     }
 
@@ -526,7 +526,7 @@
         <span class="btn-dot red"></span>
         <span class="btn-dot yellow"></span>
         <span class="btn-dot green"></span>
-        <span class="terminal-title">tty1 — linux-kernel-build</span>
+        <span class="terminal-title">tty1 — Linux Kernel v6.8.0-aarsh-sys (Compilation & System Init)</span>
       </div>
       <div class="terminal-body" id="terminal-output"></div>
     </div>
@@ -720,208 +720,127 @@
     </section>
 
   </div>
+
   <script>
-      // Initialize Lucide Vector Icons
-      lucide.createIcons();
-  
-      // Project Filtering Logic
-      function filterProjects(category) {
-        const cards = document.querySelectorAll('.project-card');
-        const buttons = document.querySelectorAll('.tab-btn');
-  
-        buttons.forEach(btn => {
-          btn.classList.remove('active');
-          const text = btn.innerText.toLowerCase();
-          if (
-            (category === 'all' && text === 'all') ||
-            (category === 'package-py' && text.includes('python packages')) ||
-            (category === 'experimental' && text.includes('experimental')) ||
-            (category === 'other' && text.includes('other'))
-          ) {
-            btn.classList.add('active');
-          }
-        });
-  
-        cards.forEach(card => {
-          if (category === 'all' || card.dataset.category === category) {
-            card.parentElement.style.display = 'block';
-          } else {
-            card.parentElement.style.display = 'none';
-          }
-        });
-      }
-  
-      // Terminal Kernel Compile Loader Logic
-      document.addEventListener("DOMContentLoaded", () => {
-        const output = document.getElementById("terminal-output");
-        const overlay = document.getElementById("terminal-overlay");
-  
-        const logs = [
-          '<span class="log-cyan">[  0.000000] Linux version 6.8.0-custom (gcc 13.2.0) #1 SMP PREEMPT_DYNAMIC</span>',
-          '[  0.002140] Command line: BOOT_IMAGE=/vmlinuz-aarsh-sys root=UUID=sys-root quiet rw',
-          '<span class="log-accent">  CC      kernel/sched/core.o</span>',
-          '  CC      kernel/power/main.o',
-          '  CC      mm/page_alloc.o',
-          '<span class="log-accent">  CC      fs/ext4/super.o</span>',
-          '  CC      drivers/gpu/drm/i915/i915_drv.o',
-          '  CC      net/ipv4/tcp_input.o',
-          '<span class="log-accent">  LD      vmlinux.o</span>',
-          '  OBJCOPY arch/x86/boot/vmlinux.bin',
-          '  BUILD   arch/x86/boot/bzImage',
-          '<span class="log-green">[  0.642100] [OK] Kernel arch/x86/boot/bzImage is ready.</span>',
-          '<span class="log-green">[  0.812311] [OK] Reached target System Initialization.</span>',
-          '<span class="log-cyan">[  1.004120] Initializing Aarsh Garg System Portfolio Subsystem...</span>',
-          '<span class="log-green">[  1.241202] [OK] Mounted Web Application Volume.</span>',
-          '<span class="log-white">Starting Web Host Engine...</span>',
-          '<span class="log-green">[  1.450000] [SUCCESS] Site compiled successfully. Launching binary stream...</span>'
-        ];
-  
-        let index = 0;
-  
-        // Fast streaming printer
-        const printInterval = setInterval(() => {
-          if (index < logs.length) {
-            const line = document.createElement("div");
-            line.className = "log-line";
-            line.innerHTML = logs[index];
-            output.appendChild(line);
-            output.scrollTop = output.scrollHeight;
-            index++;
-          } else {
-            clearInterval(printInterval);
-            setTimeout(startBinaryDissolve, 350);
-          }
-        }, 35);
-  
-        // Binary Matrix Rain & Dissipating Explosion Transition
-        function startBinaryDissolve() {
-          const canvas = document.createElement("canvas");
-          canvas.id = "binary-canvas";
-          document.body.appendChild(canvas);
-          const ctx = canvas.getContext("2d");
-  
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-  
-          const chars = "01";
-          const fontSize = 10;
-          const columns = Math.floor(canvas.width / fontSize);
-          
-          // Multi-drop setup for dense rain
-          const drops = [];
-          const DROPS_PER_COL = 2;
-  
-          for (let col = 0; col < columns; col++) {
-            for (let d = 0; d < DROPS_PER_COL; d++) {
-              drops.push({
-                x: col * fontSize,
-                y: Math.floor(Math.random() * (canvas.height / fontSize)),
-                speed: 1 + Math.random() * 2
-              });
-            }
-          }
-  
-          canvas.style.opacity = "1";
-          overlay.classList.add("terminal-dissolve");
-  
-          let frames = 0;
-          const rainPhaseFrames = 45; // Duration of standard rain stream
-  
-          function drawMatrix() {
-            if (frames < rainPhaseFrames) {
-              // PHASE 1: Dense Matrix Rain
-              ctx.fillStyle = "#000000";
-              ctx.fillRect(0, 0, canvas.width, canvas.height);
-              ctx.font = `${fontSize}px monospace`;
-  
-              for (let i = 0; i < drops.length; i++) {
-                const drop = drops[i];
-                for (let j = 0; j < 8; j++) {
-                  const charY = (drop.y - j) * fontSize;
-                  if (charY > 0 && charY < canvas.height) {
-                    const text = chars.charAt(Math.floor(Math.random() * chars.length));
-                    ctx.fillStyle = j === 0 ? "#ffffff" : `rgba(6, 182, 212, ${1 - j * 0.12})`;
-                    ctx.fillText(text, drop.x, charY);
-                  }
-                }
-  
-                if (drop.y * fontSize > canvas.height) {
-                  drop.y = 0;
-                }
-                drop.y += drop.speed;
-              }
-  
-              frames++;
-              requestAnimationFrame(drawMatrix);
-            } else {
-              // PHASE 2: Trigger Binary Scatter & Dissipate Effect
-              startBinaryExplosion();
-            }
-          }
-  
-          // Dissipation: The black screen turns into thousands of flying binary particles
-          function startBinaryExplosion() {
-            // Hide terminal overlay immediately so only canvas particles remain
-            overlay.style.display = "none";
-  
-            const particles = [];
-            const gridSpacing = 12; // Grid density for particle creation
-  
-            // Convert screen grid into floating binary particles
-            for (let x = 0; x < canvas.width; x += gridSpacing) {
-              for (let y = 0; y < canvas.height; y += gridSpacing) {
-                const angle = Math.atan2(y - canvas.height / 2, x - canvas.width / 2) + (Math.random() - 0.5);
-                const force = 3 + Math.random() * 12;
-                particles.push({
-                  x: x,
-                  y: y,
-                  vx: Math.cos(angle) * force, // Explode outward from center
-                  vy: Math.sin(angle) * force - (Math.random() * 2), // Slight upward bias
-                  char: Math.random() > 0.5 ? "0" : "1",
-                  alpha: 1,
-                  decay: 0.02 + Math.random() * 0.035, // Rate at which particle dissolves
-                  size: 9 + Math.floor(Math.random() * 5)
-                });
-              }
-            }
-  
-            function animateExplosion() {
-              // Clear canvas completely every frame so web page becomes visible through gaps
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-              let activeParticles = 0;
-  
-              for (let i = 0; i < particles.length; i++) {
-                const p = particles[i];
-  
-                if (p.alpha > 0) {
-                  activeParticles++;
-                  ctx.font = `${p.size}px monospace`;
-                  ctx.fillStyle = `rgba(6, 182, 212, ${p.alpha})`;
-                  ctx.fillText(p.char, p.x, p.y);
-  
-                  // Update particle physics
-                  p.x += p.vx;
-                  p.y += p.vy;
-                  p.vx *= 0.96; // Air drag slowdown
-                  p.vy *= 0.96;
-                  p.alpha -= p.decay; // Fade individual binary digit
-                }
-              }
-  
-              if (activeParticles > 0) {
-                requestAnimationFrame(animateExplosion);
-              } else {
-                // Clean up canvas element when all binary particles dissipated
-                canvas.remove();
-                overlay.remove();
-              }
-            }
-          }
-          animateExplosion();
-          drawMatrix();
+    // Initialize Lucide Vector Icons
+    lucide.createIcons();
+
+    // Project Filtering Logic
+    function filterProjects(category) {
+      const cards = document.querySelectorAll('.project-card');
+      const buttons = document.querySelectorAll('.tab-btn');
+
+      buttons.forEach(btn => {
+        btn.classList.remove('active');
+        const text = btn.innerText.toLowerCase();
+        if (
+          (category === 'all' && text === 'all') ||
+          (category === 'package-py' && text.includes('python packages')) ||
+          (category === 'experimental' && text.includes('experimental')) ||
+          (category === 'other' && text.includes('other'))
+        ) {
+          btn.classList.add('active');
         }
       });
+
+      cards.forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.parentElement.style.display = 'block';
+        } else {
+          card.parentElement.style.display = 'none';
+        }
+      });
+    }
+
+    // Advanced & Detailed Kernel Compile + System Init Loader Logic
+    document.addEventListener("DOMContentLoaded", () => {
+      const output = document.getElementById("terminal-output");
+      const overlay = document.getElementById("terminal-overlay");
+
+      const kernelLogs = [
+        '<span class="log-cyan">[  0.000000] Linux version 6.8.0-aarsh-sys (gcc-13 13.2.0, GNU ld 2.42) #1 SMP PREEMPT_DYNAMIC</span>',
+        '<span class="log-dim">[  0.000012] Command line: BOOT_IMAGE=/vmlinuz-6.8.0-aarsh root=UUID=3a8f9c2d-910e-4b2a-88f1 quiet rw splash acpi=force</span>',
+        '<span class="log-dim">[  0.000410] BIOS-provided physical RAM map: [0x0000000000000000 - 0x00000003ffffffff] (16384MB usable)</span>',
+        '<span class="log-dim">[  0.001021] SMBIOS 3.4.0 present. Hypervisor detected: KVM/QEMU x86_64</span>',
+        '<span class="log-accent">  CC [M]  arch/x86/kernel/head64.o</span>',
+        '<span class="log-accent">  CC [M]  arch/x86/mm/fault.o</span>',
+        '<span class="log-accent">  CC [M]  kernel/sched/fair.o (EVP_AES_256_GCM hardware acceleration)</span>',
+        '<span class="log-accent">  CC [M]  kernel/locking/mutex.o</span>',
+        '<span class="log-accent">  CC [M]  mm/page_alloc.o (NUMA node 0 initialized)</span>',
+        '<span class="log-blue">[  0.012845] ACPI: Core revision 20230628 enabled. 8 CPU logical cores detected.</span>',
+        '<span class="log-accent">  CC [M]  fs/ext4/super.o</span>',
+        '<span class="log-accent">  CC [M]  fs/btrfs/disk-io.o</span>',
+        '<span class="log-accent">  CC [M]  drivers/gpu/drm/i915/i915_drv.o</span>',
+        '<span class="log-accent">  CC [M]  drivers/net/ethernet/intel/e1000e/netdev.o</span>',
+        '<span class="log-blue">[  0.104210] PCI: Probing PCI hardware (bus 0000:00)</span>',
+        '<span class="log-blue">[  0.182014] PCI: 0000:00:02.0 [10de:2484] GPU VRAM 8192MB mapped successfully</span>',
+        '<span class="log-accent">  LD [M]  vmlinux.o</span>',
+        '<span class="log-accent">  OBJCOPY arch/x86/boot/vmlinux.bin</span>',
+        '<span class="log-accent">  BUILD   arch/x86/boot/bzImage (Compressed size: 12.4MB)</span>',
+        '<span class="log-green">[  0.421092] [OK] Kernel arch/x86/boot/bzImage build verified successfully.</span>',
+        '<span class="log-cyan">[  0.510100] Starting systemd 255.4-1-arch init process...</span>',
+        '<span class="log-green">[  0.612019] [OK] Reached target Early Boot Environment & Storage.</span>',
+        '<span class="log-green">[  0.702118] [OK] Mounted Root File System /dev/nvme0n1p2 (ext4 rw,noatime).</span>',
+        '<span class="log-cyan">[  0.840122] Initializing Aarsh Garg System Portfolio Core Runtime Subsystems...</span>',
+        '<span class="log-dim">           -> Loading module: py2shell.ko (Python-to-Bash Transpiler Engine)... [LOADED]</span>',
+        '<span class="log-dim">           -> Loading module: ajgar.ko (Hindi Language Parser Driver)... [LOADED]</span>',
+        '<span class="log-dim">           -> Loading module: uefipy_usb.ko (EFI Subsystem Sandbox)... [LOADED]</span>',
+        '<span class="log-dim">           -> Loading module: wavec_crypto.ko (Wave Cipher Hardware Acceleration)... [LOADED]</span>',
+        '<span class="log-green">[  1.102310] [OK] Reached target Multi-User System State.</span>',
+        '<span class="log-green">[  1.250410] [OK] Reached target System Initialization & Network Stack.</span>',
+        '<span class="log-white">[  1.380000] Starting GUI Display Manager & Web Host Engine...</span>',
+        '<span class="log-green">[  1.520000] [SUCCESS] All system modules compiled & active. Launching user interface...</span>'
+      ];
+
+      let logIndex = 0;
+
+      // Fast line-by-line printer
+      const printInterval = setInterval(() => {
+        if (logIndex < kernelLogs.length) {
+          const line = document.createElement("div");
+          line.className = "log-line";
+          line.innerHTML = kernelLogs[logIndex];
+          output.appendChild(line);
+          output.scrollTop = output.scrollHeight;
+          logIndex++;
+        } else {
+          clearInterval(printInterval);
+          renderProgressBar();
+        }
+      }, 25);
+
+      // Terminal progress bar completion step
+      function renderProgressBar() {
+        const progressLine = document.createElement("div");
+        progressLine.className = "log-line progress-bar-line";
+        output.appendChild(progressLine);
+
+        let progress = 0;
+        const barLength = 28;
+
+        const progressInterval = setInterval(() => {
+          progress += 5;
+          const completed = Math.round((progress / 100) * barLength);
+          const remaining = barLength - completed;
+          const barStr = "[" + "=".repeat(completed) + ">" + " ".repeat(Math.max(0, remaining - 1)) + "]";
+          progressLine.innerHTML = `<span class="log-cyan">BOOTING UI ENGINE: </span> <span class="log-green">${barStr} ${progress}%</span>`;
+          output.scrollTop = output.scrollHeight;
+
+          if (progress >= 100) {
+            clearInterval(progressInterval);
+            setTimeout(dissolveOverlay, 250);
+          }
+        }, 18);
+      }
+
+      // Smooth fade-out transition to reveal the main portfolio interface
+      function dissolveOverlay() {
+        overlay.classList.add("terminal-fade-out");
+        setTimeout(() => {
+          overlay.remove();
+        }, 800);
+      }
+    });
   </script>
 </body>
 </html>
