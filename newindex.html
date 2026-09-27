@@ -720,7 +720,6 @@
     </section>
 
   </div>
-
   <script>
       // Initialize Lucide Vector Icons
       lucide.createIcons();
@@ -794,7 +793,7 @@
           }
         }, 35);
   
-        // Super-Dense Binary Matrix Rain Dissolve
+        // Binary Matrix Rain & Dissipating Explosion Transition
         function startBinaryDissolve() {
           const canvas = document.createElement("canvas");
           canvas.id = "binary-canvas";
@@ -805,19 +804,19 @@
           canvas.height = window.innerHeight;
   
           const chars = "01";
-          const fontSize = 9; // Reduced size for significantly more columns & rows
+          const fontSize = 10;
           const columns = Math.floor(canvas.width / fontSize);
           
-          // Multi-drop structure: 3 active streams per column across the screen
+          // Multi-drop setup for dense rain
           const drops = [];
-          const DROPS_PER_COL = 3;
+          const DROPS_PER_COL = 2;
   
           for (let col = 0; col < columns; col++) {
             for (let d = 0; d < DROPS_PER_COL; d++) {
               drops.push({
                 x: col * fontSize,
                 y: Math.floor(Math.random() * (canvas.height / fontSize)),
-                speed: 1 + Math.random() * 1.5
+                speed: 1 + Math.random() * 2
               });
             }
           }
@@ -826,47 +825,100 @@
           overlay.classList.add("terminal-dissolve");
   
           let frames = 0;
-          const totalFrames = 65;
+          const rainPhaseFrames = 45; // Duration of standard rain stream
   
           function drawMatrix() {
-            // Keep canvas opaque black during rendering
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (frames < rainPhaseFrames) {
+              // PHASE 1: Dense Matrix Rain
+              ctx.fillStyle = "#000000";
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.font = `${fontSize}px monospace`;
   
-            ctx.font = `${fontSize}px monospace`;
+              for (let i = 0; i < drops.length; i++) {
+                const drop = drops[i];
+                for (let j = 0; j < 8; j++) {
+                  const charY = (drop.y - j) * fontSize;
+                  if (charY > 0 && charY < canvas.height) {
+                    const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                    ctx.fillStyle = j === 0 ? "#ffffff" : `rgba(6, 182, 212, ${1 - j * 0.12})`;
+                    ctx.fillText(text, drop.x, charY);
+                  }
+                }
   
-            for (let i = 0; i < drops.length; i++) {
-              const drop = drops[i];
+                if (drop.y * fontSize > canvas.height) {
+                  drop.y = 0;
+                }
+                drop.y += drop.speed;
+              }
   
-              // Render 10 trail characters per drop head for extreme visual density
-              for (let j = 0; j < 10; j++) {
-                const charY = (drop.y - j) * fontSize;
-                if (charY > 0 && charY < canvas.height) {
-                  const text = chars.charAt(Math.floor(Math.random() * chars.length));
-                  // Bright white lead character, fading cyan trail
-                  ctx.fillStyle = j === 0 ? "#ffffff" : `rgba(6, 182, 212, ${1 - j * 0.09})`;
-                  ctx.fillText(text, drop.x, charY);
+              frames++;
+              requestAnimationFrame(drawMatrix);
+            } else {
+              // PHASE 2: Trigger Binary Scatter & Dissipate Effect
+              startBinaryExplosion();
+            }
+          }
+  
+          // Dissipation: The black screen turns into thousands of flying binary particles
+          function startBinaryExplosion() {
+            // Hide terminal overlay immediately so only canvas particles remain
+            overlay.style.display = "none";
+  
+            const particles = [];
+            const gridSpacing = 12; // Grid density for particle creation
+  
+            // Convert screen grid into floating binary particles
+            for (let x = 0; x < canvas.width; x += gridSpacing) {
+              for (let y = 0; y < canvas.height; y += gridSpacing) {
+                const angle = Math.atan2(y - canvas.height / 2, x - canvas.width / 2) + (Math.random() - 0.5);
+                const force = 3 + Math.random() * 12;
+                particles.push({
+                  x: x,
+                  y: y,
+                  vx: Math.cos(angle) * force, // Explode outward from center
+                  vy: Math.sin(angle) * force - (Math.random() * 2), // Slight upward bias
+                  char: Math.random() > 0.5 ? "0" : "1",
+                  alpha: 1,
+                  decay: 0.02 + Math.random() * 0.035, // Rate at which particle dissolves
+                  size: 9 + Math.floor(Math.random() * 5)
+                });
+              }
+            }
+  
+            function animateExplosion() {
+              // Clear canvas completely every frame so web page becomes visible through gaps
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+              let activeParticles = 0;
+  
+              for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+  
+                if (p.alpha > 0) {
+                  activeParticles++;
+                  ctx.font = `${p.size}px monospace`;
+                  ctx.fillStyle = `rgba(6, 182, 212, ${p.alpha})`;
+                  ctx.fillText(p.char, p.x, p.y);
+  
+                  // Update particle physics
+                  p.x += p.vx;
+                  p.y += p.vy;
+                  p.vx *= 0.96; // Air drag slowdown
+                  p.vy *= 0.96;
+                  p.alpha -= p.decay; // Fade individual binary digit
                 }
               }
   
-              if (drop.y * fontSize > canvas.height) {
-                drop.y = 0;
+              if (activeParticles > 0) {
+                requestAnimationFrame(animateExplosion);
+              } else {
+                // Clean up canvas element when all binary particles dissipated
+                canvas.remove();
+                overlay.remove();
               }
-              drop.y += drop.speed;
             }
   
-            frames++;
-            if (frames < totalFrames) {
-              requestAnimationFrame(drawMatrix);
-            } else {
-              // Smooth fade out to reveal portfolio
-              canvas.style.transition = "opacity 0.6s ease";
-              canvas.style.opacity = "0";
-              setTimeout(() => {
-                overlay.remove();
-                canvas.remove();
-              }, 600);
-            }
+            animateExplosion();
           }
   
           drawMatrix();
