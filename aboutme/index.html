@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Me — Aarsh Garg</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Lucide Vector Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Marked.js Engine (for converting Markdown to HTML) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+
+  <!-- Highlight.js Engine for Code Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #060e14;
+      --card-bg: rgba(12, 23, 34, 0.75);
+      --card-border: rgba(6, 182, 212, 0.15);
+      --text-main: #f0f9ff;
+      --text-muted: #7dd3fc;
+      --accent-1: #06b6d4;
+      --accent-2: #3b82f6;
+      --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      --glow: rgba(6, 182, 212, 0.18);
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* CUSTOM SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(6, 182, 212, 0.25);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-1);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 70%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* Ambient background lighting */
+    .bg-glow-1, .bg-glow-2 {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      filter: blur(140px);
+      z-index: -1;
+      opacity: 0.35;
+      pointer-events: none;
+      animation: float 12s ease-in-out infinite alternate;
+    }
+
+    .bg-glow-1 {
+      background: var(--accent-1);
+      top: -120px;
+      left: -100px;
+    }
+
+    .bg-glow-2 {
+      background: var(--accent-2);
+      top: 400px;
+      right: -100px;
+      animation-delay: -6s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 60px) scale(1.15); }
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem;
+    }
+
+    .glass {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .markdown-card {
+      padding: 3rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .markdown-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent-gradient);
+    }
+
+    /* MARKDOWN RENDERED CONTENT STYLES */
+    .markdown-body {
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.75;
+      font-size: 1rem;
+    }
+
+    .markdown-body h1, .markdown-body h2, .markdown-body h3, 
+    .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+      color: var(--text-main);
+      font-weight: 800;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .markdown-body h1:first-child {
+      margin-top: 0;
+    }
+
+    .markdown-body h1 {
+      font-size: 2.5rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .markdown-body h2 {
+      font-size: 1.5rem;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .markdown-body h2::before {
+      content: '>';
+      font-family: var(--font-mono);
+      color: var(--accent-1);
+      font-weight: 700;
+    }
+
+    .markdown-body h3 {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .markdown-body p {
+      margin-bottom: 1.25rem;
+      color: #94a3b8;
+    }
+
+    .markdown-body a {
+      color: var(--text-main);
+      text-decoration: none;
+      background: rgba(6, 182, 212, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .markdown-body a:hover {
+      background: var(--accent-1);
+      color: var(--bg);
+      border-color: var(--accent-1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px var(--glow);
+    }
+
+    .markdown-body ul, .markdown-body ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+      color: #94a3b8;
+    }
+
+    .markdown-body li {
+      margin-bottom: 0.5rem;
+    }
+
+    .markdown-body blockquote {
+      border-left: 3px solid var(--accent-1);
+      padding: 0.75rem 1.25rem;
+      margin: 1.5rem 0;
+      background: rgba(6, 182, 212, 0.05);
+      border-radius: 0 10px 10px 0;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .markdown-body code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--accent-1);
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid rgba(6, 182, 212, 0.15);
+    }
+
+    .markdown-body pre {
+      margin: 1.5rem 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      background: #040a0f !important;
+    }
+
+    .markdown-body pre code {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      padding: 1.25rem;
+      display: block;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    .markdown-body th, .markdown-body td {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--card-border);
+      text-align: left;
+    }
+
+    .markdown-body th {
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+    }
+
+    .markdown-body tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .markdown-body hr {
+      border: none;
+      height: 1px;
+      background: var(--card-border);
+      margin: 2rem 0;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 1.5rem 1rem;
+      }
+      .markdown-card {
+        padding: 1.75rem 1.25rem;
+      }
+      .markdown-body h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient background lighting -->
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <div class="container">
+    <main class="glass markdown-card">
+      <article id="markdown-content" class="markdown-body">
+        <!-- RENDERED MARKDOWN WILL BE INJECTED HERE -->
+      </article>
+    </main>
+  </div>
+
+  <script>
+    // RAW ABOUT ME MARKDOWN CONTENT
+    const rawMarkdown = `
+# Aarsh Garg
+
+\`Student\` • \`Open Source Developer\`
+
+---
+
+## About Me
+
+I get interested in projects that are open-source, related to systems, or projects that make programming easier.
+
+### Links
+- [GitHub](https://github.com/AarshGarg2011Code)
+- [Snapchat](https://snapchat.com/@aarshankurgarg)
+- [PyPI](https://pypi.org/user/aarshgargpython)
+
+---
+
+## Skillset
+
+- \`Python\`
+- \`Bash\`
+- \`BatchScript\`
+- \`C\`
+- \`JSON\`
+- \`Linux\`
+- \`Git & GitHub\`
+
+---
+
+## Featured Projects
+
+### Py2Shell
+A Python-Bash Transpiler package available on PyPI.
+- **PyPI:** [py2shell](https://pypi.org/project/py2shell)
+- **Repository:** [AarshGarg2011Code/py2shell](https://github.com/AarshGarg2011Code/py2shell)
+- **Tags:** \`Python\` \`Bash\`
+
+### Ajgar
+A Python Package that enables users to write Python in Hindi.
+- **PyPI:** [ajgar](https://pypi.org/project/ajgar)
+- **Repository:** [AarshGarg2011Code/ajgar](https://github.com/AarshGarg2011Code/ajgar)
+- **Tags:** \`Python\` \`Hindi\`
+
+### UEFIPY-USB
+Tool for testing Python in UEFI Setups.
+- **Repository:** [AarshGarg2011Code/UEFIPY-USB](https://github.com/AarshGarg2011Code/UEFIPY-USB)
+- **Tags:** \`Python\` \`EFI Shell\`
+
+### equations-pkg
+Python package for equations solving.
+- **PyPI:** [equations-pkg](https://pypi.org/project/equations-pkg)
+- **Repository:** [AarshGarg2011Code/equations-pkg](https://github.com/AarshGarg2011Code/equations-pkg)
+- **Tags:** \`Python\` \`Math\`
+
+### AntiScript
+Discontinued Python-Based Programming Language Project saved for reference.
+- **Repository:** [AarshGarg2011Code/AntiScript](https://github.com/AarshGarg2011Code/AntiScript)
+- **Tags:** \`Python\` \`Syntax Handling\`
+
+### Waves Cipher WaveC
+Python-Based Cipher that used Wave Patterns for Cryptographic Diffusion.
+- **Repository:** [AarshGarg2011Code/Waves-Cipher-WaveC](https://github.com/AarshGarg2011Code/Waves-Cipher-WaveC)
+- **Tags:** \`Python\` \`Cryptography\`
+
+---
+
+## Get In Touch
+
+Let's build something together! Contact me for collaboration:
+
+- **Email:** [aarshg.13@gmail.com](mailto:aarshg.13@gmail.com)
+- **Phone:** [+91 8356949225](tel:+918356949225)
+`;
+
+    // Configure Marked parser with highlight.js integration
+    marked.setOptions({
+      highlight: function(code, lang) {
+        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+        return hljs.highlight(code, { language }).value;
+      },
+      gfm: true,
+      breaks: true
+    });
+
+    // Render markdown directly on load
+    document.addEventListener("DOMContentLoaded", () => {
+      const targetElement = document.getElementById("markdown-content");
+      targetElement.innerHTML = marked.parse(rawMarkdown);
+      
+      // Initialize vector icons if any render
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>
