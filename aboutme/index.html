@@ -333,6 +333,9 @@
       border-radius: 12px;
       filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.4));
     }
+    .markdown-body div[style*="text-align: center"] h1 {
+      justify-content: center;
+    }
 </style>
 </head>
 <body>
@@ -346,12 +349,13 @@
   </div>
   <script>
     const rawMarkdown = `
+<div style="text-align: center;">
 # Aarsh Garg
 
 <img src="logo.png" alt="Logo" class="markdown-logo" />
 
 \`Student\` • \`Open Source Developer\`
-
+</div>
 ---
 
 ## About Me
