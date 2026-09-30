@@ -422,13 +422,12 @@
       width: 500px;
       height: 500px;
       transform: translate(-50%, -50%);
-      background-image: url('icon.png');
+      background-image: url('AARSH_GARG-removebg-preview.png');
       background-repeat: no-repeat;
       background-position: center;
       background-size: contain;
-      mix-blend-mode: screen;
-      filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 35px rgba(6, 182, 212, 0.6));
-      opacity: 0.25;
+      filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 40px rgba(6, 182, 212, 0.6));
+      opacity: 0.15;
       pointer-events: none;
       z-index: -1;
       animation: logoGlowPulse 6s ease-in-out infinite alternate;
@@ -436,13 +435,13 @@
     @keyframes logoGlowPulse {
       0% {
         transform: translate(-50%, -50%) scale(1);
-        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 25px rgba(6, 182, 212, 0.4));
-        opacity: 0.20;
+        filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 25px rgba(6, 182, 212, 0.4));
+        opacity: 0.12;
       }
       100% {
         transform: translate(-50%, -50%) scale(1.04);
-        filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 45px rgba(6, 182, 212, 0.8));
-        opacity: 0.30;
+        filter: brightness(0) invert(1) drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 50px rgba(6, 182, 212, 0.8));
+        opacity: 0.20;
       }
     }
   </style>
