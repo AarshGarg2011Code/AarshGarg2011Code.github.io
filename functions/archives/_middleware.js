@@ -6,11 +6,17 @@ export async function onRequest(context) {
   const url = new URL(context.request.url);
   const targetedFile = url.searchParams.get('file');
   if (targetedFile) {
-    const fileData = await kvStore.get(targetedFile, { type: "stream" });
-    if (!fileData) {
+    const base64Data = await kvStore.get(targetedFile);
+    if (!base64Data) {
       return new Response("Requested archive item not found.", { status: 404 });
     }
-    return new Response(fileData, {
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Response(byteArray, {
       headers: {
         "Content-Type": "application/octet-stream",
         "Content-Disposition": `attachment; filename="${targetedFile}"`
