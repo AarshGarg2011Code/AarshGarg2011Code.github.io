@@ -1,23 +1,23 @@
 export async function onRequest(context) {
-  const bucket = context.env.AG2C_ARCHIVES;
-  if (!bucket) {
-    return new Response("Error: R2 storage bucket mapping ('AG2C_ARCHIVES') missing in settings.", { status: 500 });
+  const kvStore = context.env.AG2C_ARCHIVES_BINDING;
+  if (!kvStore) {
+    return new Response("Error: KV storage binding ('AG2C_ARCHIVES_BINDING') missing in settings.", { status: 500 });
   }
   const url = new URL(context.request.url);
   const targetedFile = url.searchParams.get('file');
   if (targetedFile) {
-    const fileObject = await bucket.get(targetedFile);
-    if (!fileObject) {
+    const fileData = await kvStore.get(targetedFile, { type: "stream" });
+    if (!fileData) {
       return new Response("Requested archive item not found.", { status: 404 });
     }
-    return new Response(fileObject.body, {
+    return new Response(fileData, {
       headers: {
-        "Content-Type": fileObject.httpMetadata?.contentType || "application/octet-stream",
+        "Content-Type": "application/octet-stream",
         "Content-Disposition": `attachment; filename="${targetedFile}"`
       }
     });
   }
-  const fileList = await bucket.list();
+  const fileList = await kvStore.list();
   let htmlOutput = `
   <!DOCTYPE html>
   <html lang="en">
@@ -42,19 +42,19 @@ export async function onRequest(context) {
   <pre>
   .
   `;
-  if (fileList.objects.length === 0) {
+  if (fileList.keys.length === 0) {
     htmlOutput += `└── (No files uploaded to the archive yet)`;
   } else {
-    fileList.objects.forEach((file, index) => {
-      const isLast = index === fileList.objects.length - 1;
+    fileList.keys.forEach((file, index) => {
+      const isLast = index === fileList.keys.length - 1;
       const treeBranch = isLast ? '└── ' : '├── ';
-      htmlOutput += `${treeBranch}<a href="/archives?file=${encodeURIComponent(file.key)}">${file.key}</a>\n`;
+      htmlOutput += `${treeBranch}<a href="/archives?file=${encodeURIComponent(file.name)}">${file.name}</a>\n`;
     });
   }
   htmlOutput += `
   </pre>
   <hr>
-  <div class="footer-info">Cloudflare Pages Serverless Engine</div>
+  <div class="footer-info">Cloudflare Pages Free Serverless KV Engine</div>
   </body>
   </html>
   `;
