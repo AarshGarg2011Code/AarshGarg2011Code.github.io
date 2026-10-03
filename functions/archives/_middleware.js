@@ -1,7 +1,7 @@
 export async function onRequest(context) {
-  const kvStore = context.env.AG2C_ARCHIVES_BINDING;
+  const kvStore = context.env.AG2C_BINDING;
   if (!kvStore) {
-    return new Response("Error: KV storage binding ('AG2C_ARCHIVES_BINDING') missing in settings.", { status: 500 });
+    return new Response("Error: KV storage binding ('AG2C_BINDING') missing in settings.", { status: 500 });
   }
   const url = new URL(context.request.url);
   const targetedFile = url.searchParams.get('file');
@@ -43,7 +43,7 @@ export async function onRequest(context) {
   .
   `;
   if (fileList.keys.length === 0) {
-    htmlOutput += `└── (No files uploaded to the archive yet)`;
+    htmlOutput += `└── (No files uploaded to the archive folder yet)`;
   } else {
     fileList.keys.forEach((file, index) => {
       const isLast = index === fileList.keys.length - 1;
