@@ -193,7 +193,7 @@ export async function onRequest(context) {
     fileList.keys.forEach((file, index) => {
       const isLast = index === fileList.keys.length - 1;
       const treeBranch = isLast ? '└── ' : '├── ';
-      htmlOutput += `${treeBranch}<a href="/archives?file=${encodeURIComponent(file.name)}">${file.name}</a>\n`;
+      htmlOutput += `${treeBranch}<a href="/docs?file=${encodeURIComponent(file.name)}">${file.name}</a>\n`;
     });
   }
   htmlOutput += `</pre>
